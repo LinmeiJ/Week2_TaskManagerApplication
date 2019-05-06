@@ -12,15 +12,15 @@ public class TaskManager {
 /************** Name: Linmei Mills ***************/
 /*What this program can do:
  * 1. This program can list all members' tasks or display a specific members' tasks 
- * 2. It can delete tasks, add tasks, edit existed tasks, change task status,
- * 		 look up tasks before a specific data, and search tasks by name.
+ * 2. It can delete tasks, add tasks, edit existed tasks(name, due date and description), 
+ * 		change task status, look up tasks before a specific data, and search tasks by name.
  * */
 	public static void main(String[] args) {
+		System.out.println("|  Welcome to The Task Manager!  |");
 		Scanner sc = new Scanner(System.in);
-		System.out.println("||  Welcome to The Task Manager!  ||");
 		LinkedList<Task> taskList = new LinkedList<Task>();
-
-		Task ts = new Task(1, "Linmei", "05/05/2018", "Incomplete", "Grocery Shopping");
+		//Just initializing 1 task for testing
+		Task ts = new Task(1, "Linmei", "05/05/2018", "Incomplete", "Studying");
 		taskList.add(ts);
 		
 		String quit = "n";
@@ -80,8 +80,8 @@ public class TaskManager {
 	public static void displayList(LinkedList<Task> taskList){
 		Validator.tableFormat();
 		for(int i = 0; i < taskList.size(); i++) {
-			System.out.format("  %-11d %-13s %-18s %-23s %s %n", taskList.get(i).getNum(), taskList.get(i).getName(),
-					taskList.get(i).getDueDate(),taskList.get(i).getTaskStatus(), taskList.get(i).getDescription());
+			System.out.format("  %-11d %-13s %-18s %-23s %s %n", taskList.get(i).getNum(), 
+					taskList.get(i).getName(), taskList.get(i).getDueDate(),taskList.get(i).getTaskStatus(), taskList.get(i).getDescription());
 		}	
 		System.out.println("-----------------------------------------------------------------------------------------------");
  	}
@@ -112,6 +112,7 @@ public class TaskManager {
 			continueAdd = Validator.getString(sc,"Would you like to add more task?(y/n): ");
 		}
 	}
+	
 	private static void deleteTask(Scanner sc, LinkedList<Task> taskList) {
 		displayList(taskList);
 		int itemNum =Validator.getInt(sc, "Enter the task number that you wish to delete: ");//prompt
@@ -134,40 +135,30 @@ public class TaskManager {
 	
 	public static void tasksStatus(Scanner sc, LinkedList<Task> taskList){
 		displayList(taskList);
-		int num = Validator.getInt(sc, "Enter the task number that you have complete?");//prompt
-		System.out.println("Are you sure to change the status of number " + num + "? (y/n):");//make sure
-		String ensure = sc.nextLine().toLowerCase();
-		if(num <= taskList.size() && num > 0) {
+		int num = Validator.getInt(sc, "Enter the task number that you want it to be complete?");//prompt
+		if(num <= taskList.size() && num > 0 && taskList.get(num - 1).getTaskStatus().matches("Incomplete")) {
+			System.out.println("Are you sure to change the status of number " + num + "? (y/n):");//make sure
+			String ensure = sc.nextLine().toLowerCase();
 			if(ensure.matches("y") || ensure.matches("yes")) {//if yes, change status from "Incomplete" to "complete"
-				for(int i = 0; i < taskList.size(); i++) {
-					if(taskList.get(i).getNum() == num) {//if item found
-						taskList.set(taskList.indexOf(taskList.get(i)), new Task(taskList.get(i).getNum(),
-								taskList.get(i).getName(),taskList.get(i).getDueDate(),
-								 "Complete", taskList.get(i).getDescription()));
-						System.out.println("Marked task number " + num + " as Complete.");
-					}
-				}
+				taskList.get(num - 1).setTaskStatus("Complete");
+				System.out.println("Marked task number " + num + " as Complete.");
 			}
-		else System.out.println("Task number doesn't exist.");// if item not found
 		}
+		else System.out.println("This task is already completed or the task doesn't exist.");
 	}
+	
 	
 
 	public static void editTask(Scanner sc, LinkedList<Task> taskList){
 		displayList(taskList);
-		int num = Validator.getInt(sc, "Enter the task number you wish to edit its description: ");//prompt
-		Validator.tableFormat();
+		int num = Validator.getInt(sc, "Enter the task number you wish to edit: ");
+//		Validator.tableFormat();
+		String selectContent = "";
 		if(num <= taskList.size()){	
 			for(int i = 0; i < taskList.size(); i++) {
 				if(taskList.get(i).getNum() == num) {
-					String ensure = Validator.getString(sc, "Are you sure to edit task number " + num + "? (y/n)");
-					if(ensure.matches("y") || ensure.matches("yes")) {
-						String updateD = Validator.getString(sc, "Please update the new description: ");
-						taskList.set(taskList.indexOf(taskList.get(i)), new Task(taskList.get(i).getNum(),
-								taskList.get(i).getName(),taskList.get(i).getDueDate(),
-								taskList.get(i).getTaskStatus(), updateD));
-						System.out.println("The description of task " + num + " has been updated");
-					}
+					selectContent = Validator.getString(sc,"Would you like to edit name, due date or task description?");
+						updateListContent(sc, taskList, num, selectContent);
 				}
 			}
 		}
@@ -175,6 +166,24 @@ public class TaskManager {
 			System.out.println("Name is not found");
 			System.out.println("-----------------------------------------------------------------------------------------------");
 		}
+	}
+
+	private static void updateListContent(Scanner sc, LinkedList<Task> taskList, int num, String content){
+		String ensure = Validator.getString(sc, "Are you sure to edit the "+ content + "? (y/n)");
+		if(ensure.toLowerCase().contains("yn")) {
+			if(ensure.matches("y") || ensure.matches("yes")) {
+				String update= Validator.getString(sc, "Please update the " + content + ": ");
+				if(content.equalsIgnoreCase("name")) {
+					taskList.get(num - 1).setName(update);
+				}else if(content.toLowerCase().matches("due date")){
+					taskList.get(num - 1).setDueDate(update);
+				}else if(content.toLowerCase().matches("Description")) {
+					taskList.get(num - 1).setDescription(update);
+				}
+				else System.out.println("Entry is invalid.");
+				System.out.println(content + " has been updated.");
+			}
+		}else System.out.println("Entry is invalid");
 	}
 	
 	
@@ -210,7 +219,7 @@ public class TaskManager {
 			for(int i = 0; i < taskList.size(); i++) {
 				if(taskList.get(i).getName().toLowerCase().matches(name)) {
 					System.out.format("  %-11d %-13s %-18s %-23s %s %n", taskList.get(i).getNum(), taskList.get(i).getName(),
-							taskList.get(i).getDueDate(),taskList.get(i).getTaskStatus(), taskList.get(i).getDescription());
+						taskList.get(i).getDueDate(),taskList.get(i).getTaskStatus(), taskList.get(i).getDescription());
 				}
 				continue;
 			}
@@ -222,7 +231,6 @@ public class TaskManager {
 		}
 	}
 
-	
 	public static String userQuit(Scanner sc) {
 		String quit;
 		System.out.println("Are you sure to quit? (y/n)");

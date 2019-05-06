@@ -54,11 +54,11 @@ public class Task {
 	}
 	
 	public void displayMenu() {
-		System.out.println("||************ MENU **************||");
+		System.out.println("************ MENU **************");
 		System.out.println("           1. List tasks \n           2. Add task \n           3. Delete task \n"
 				+ "           4. Mark task complete\n           5. Edit Task\n           6. Search Tasks before A Date\n           "
 				+ "7. Search Tasks by Name\n           8. Quit");
-		System.out.println("||********************************||");
+		System.out.println("********************************");
 	}	
 }
 
