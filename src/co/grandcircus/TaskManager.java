@@ -102,7 +102,7 @@ public class TaskManager {
 			System.out.println("Enter task description: ");
 			String descrpStr = sc.nextLine();
 			
-			System.out.println("Enter the due date(dd/dd/yyyy): ");
+			System.out.println("Enter the due date(mm/dd/yyyy): ");
 			String d =  sc.nextLine();
 			
 			String dateStr = Validator.validateDate(sc, d);
@@ -187,9 +187,9 @@ public class TaskManager {
 	
 	
 	public static void getTaskBeforeADate(Scanner sc, LinkedList<Task> taskList) {
-        DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+        DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
 		String userDateInput = Validator.getString(sc,"Enter the date to show tasks before "
-				+ "that date(dd/mm/yyyy, Exclusive): ");
+				+ "that date(mm/dd/yyyy, Exclusive): ");
 		System.out.println(userDateInput);
 		String taskDate = "";
 		Validator.tableFormat();//table format
