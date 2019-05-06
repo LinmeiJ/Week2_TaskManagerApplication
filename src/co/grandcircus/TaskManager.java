@@ -31,37 +31,31 @@ public class TaskManager {
 			switch (choice) {
 			case 1:
 				displayList(taskList);
-				System.out.println("Press \"Enter\" to return to the main menu.");
-				sc.nextLine();
-				System.out.println();
+				returnMainMenu(sc);
 				break;
 			case 2:						//ask user enter each piece of data
 				addTasks(sc, taskList);// 	with incompleted status and task numbers
-				System.out.println("Press \"Enter\" to return to the main menu.");
-				sc.nextLine();
+				returnMainMenu(sc);
 				break;
 			case 3:
 				deleteTask(sc, taskList);//choose to delete task
-				System.out.println("Press \"Enter\" to return to the main menu.");
-				sc.nextLine();
+				returnMainMenu(sc);
 				break;
 			case 4:
 				tasksStatus(sc, taskList);//mark task complete 
-				System.out.println("Press \"Enter\" to return to the main menu.");
-				sc.nextLine();
+				returnMainMenu(sc);
 				break;
 			case 5:
 				editTask(sc, taskList);
-				System.out.println("Press \"Enter\" to return to the main menu.");
-				sc.nextLine();
+				returnMainMenu(sc);
 				break;
 			case 6:
 				getTaskBeforeADate(sc, taskList);
-				System.out.println("Press \"Enter\" to return to the main menu.");
-				sc.nextLine();
+				returnMainMenu(sc);
 				break;
 			case 7: 
-				searchMember(sc,taskList);
+				searchMember(sc, taskList);
+				returnMainMenu(sc);
 				break;
 			case 8:
 				quit = userQuit(sc);// user choose quit, and ensure they want quit
@@ -75,6 +69,11 @@ public class TaskManager {
 			}
 		}while(quit.equalsIgnoreCase("n"));
 		System.out.println("Goodbye!");
+	}
+	
+	public static void returnMainMenu(Scanner sc) {
+		System.out.println("Press \"Enter\" to return to the main menu.");	
+		sc.nextLine();
 	}
 	
 	public static void displayList(LinkedList<Task> taskList){
