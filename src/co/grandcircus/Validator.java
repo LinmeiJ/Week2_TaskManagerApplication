@@ -85,14 +85,15 @@ public class Validator {
 		return d;
 	}
 
-	public static String getStringMatchingRegex(Scanner sc, String prompt, String regex) {
+	public static String getStringMatchingRegex(Scanner sc, String prompt) {
 		boolean isValid = false;
 
 		String input;
 
 		do {
-			input = getString(sc, prompt);
-			if (input.matches(regex)) {
+			System.out.println(prompt);
+			input = sc.nextLine();
+			if (input.matches("[a-zA-Z ]+")) {
 				isValid = true;
 			} else {
 				System.out.println("Input must match the right format: ");
@@ -128,11 +129,10 @@ public static String validateDate(Scanner sc, String date) {
 		String regex = "^[0-3]?[0-9]/[0-3]?[0-9]/(?:[0-9]{2})?[0-9]{2}$";
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(date);
-		
 		if(matcher.matches()) {
 			return date; 
 		} else {
-			return "Sorry, %s is invalid data. %n ";
+			return "Sorry, invalid data. ";
 		}
 	}
 //get current time and date
@@ -152,6 +152,19 @@ public static String runtimeDate() {
 	System.out.println("===============================================================================================");
 	System.out.format(" %-12s %-13s %-18s %s %28s\n", "Task#", "Name", "Due Date", "Status", "Description");
 	System.out.println("===============================================================================================");
+	}
+	
+	// String w/o numbers and also not an empty string
+	public static String checkStringWONumEmpty(Scanner sc, String prompt) {
+		String str = "";
+		System.out.println(prompt);
+		if(sc.hasNextLine()) {
+			str =  sc.nextLine();
+			if(prompt.matches("[a-zA-Z]")) {
+				return str;
+			}
+		}
+		return "Invalid entry.";
 	}
 }
 
