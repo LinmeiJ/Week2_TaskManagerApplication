@@ -1,8 +1,5 @@
-package co.grandcircus;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -13,7 +10,7 @@ public class TaskManager {
 /*What this program can do:
  * 1. This program can list all members' tasks or display a specific members' tasks 
  * 2. It can delete tasks, add tasks, edit existed tasks(name, due date and description), 
- * 		change task status, look up tasks before a specific data, and search tasks by name.
+ * 		change task status, display tasks before a certain due date , and search tasks by name.
  * */
 	public static void main(String[] args) {
 		System.out.println("|  Welcome to The Task Manager!  |");
@@ -96,14 +93,14 @@ public class TaskManager {
 				num = 1;
 			}
 			else num = taskList.indexOf(taskList.getLast()) + 2; 
-			String nameStr = Validator.getString(sc, "Enter member's name: ");
+			String nameStr = Validator.getStringMatchingRegex(sc, "Enter member's name: ");
 //			sc.nextLine();
 			
 			System.out.println("Enter task description: ");
 			String descrpStr = sc.nextLine();
 			
-			System.out.println("Enter the due date(mm/dd/yyyy): ");
-			String d =  sc.nextLine();
+			System.out.println("Enter the due date(dd/MM/yyyy): ");
+			String d =Validator.validateDate(sc, sc.nextLine());
 			
 			String dateStr = Validator.validateDate(sc, d);
 			String taskStatuStr = "Incomplete"; 
@@ -157,7 +154,7 @@ public class TaskManager {
 			for(int i = 0; i < taskList.size(); i++) {
 				if(taskList.get(i).getNum() == num) {
 					selectContent = Validator.getString(sc,"Would you like to edit name, due date or task description?");
-						updateListContent(sc, taskList, num, selectContent);
+					updateListContent(sc, taskList, num, selectContent);
 				}
 			}
 		}
@@ -169,7 +166,7 @@ public class TaskManager {
 
 	private static void updateListContent(Scanner sc, LinkedList<Task> taskList, int num, String content){
 		String ensure = Validator.getString(sc, "Are you sure to edit the "+ content + "? (y/n)");
-		if(ensure.toLowerCase().contains("yn")) {
+		if(ensure.toLowerCase().equalsIgnoreCase("y")) {
 			if(ensure.matches("y") || ensure.matches("yes")) {
 				String update= Validator.getString(sc, "Please update the " + content + ": ");
 				if(content.equalsIgnoreCase("name")) {
@@ -179,32 +176,28 @@ public class TaskManager {
 				}else if(content.toLowerCase().matches("Description")) {
 					taskList.get(num - 1).setDescription(update);
 				}
-				else System.out.println("Entry is invalid.");
+//				else System.out.println("Entry is invalid.");
 				System.out.println(content + " has been updated.");
 			}
 		}else System.out.println("Entry is invalid");
 	}
 	
+	//there is a bug. not sure how to fix it
 	
 	public static void getTaskBeforeADate(Scanner sc, LinkedList<Task> taskList) {
-        DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
+		DateTimeFormatter f = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		String userDateInput = Validator.getString(sc,"Enter the date to show tasks before "
-				+ "that date(mm/dd/yyyy, Exclusive): ");
-		System.out.println(userDateInput);
+				+ "that date(dd/MM/yyyy, Exclusive): ");
+		
+		LocalDate date1 = LocalDate.parse(userDateInput, f);
 		String taskDate = "";
-		Validator.tableFormat();//table format
+		Validator.tableFormat();
 		
     	for(int i = 0; i < taskList.size(); i++) {
-    		taskDate = taskList.get(i).getDueDate();
-    		try {
-				if((df.parse(taskDate).before(df.parse(userDateInput)))) {
-					System.out.format("  %-11d %-13s %-18s %-23s %s %n", taskList.get(i).getNum(), taskList.get(i).getName(),
-							taskList.get(i).getDueDate(),taskList.get(i).getTaskStatus(), taskList.get(i).getDescription());
-				continue;
-				}
-			} catch (ParseException e) {
-				e.printStackTrace();
-				System.out.println("No Task is due before \" "+ userDateInput + "\". ");
+    		LocalDate date2 = LocalDate.parse(taskList.get(i).getDueDate(), f);
+			if((date2.isBefore(date1))) {
+				System.out.format("  %-11d %-13s %-18s %-23s %s %n", taskList.get(i).getNum(), taskList.get(i).getName(),
+						taskList.get(i).getDueDate(),taskList.get(i).getTaskStatus(), taskList.get(i).getDescription());
 			}
     	}
     	
@@ -240,5 +233,4 @@ public class TaskManager {
 		else quit = "n";
 		return quit;
 	}
-
 }
