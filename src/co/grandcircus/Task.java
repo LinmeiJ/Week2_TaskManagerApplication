@@ -1,7 +1,5 @@
 package co.grandcircus;
 
-import java.util.LinkedList;
-
 public class Task {
 
 	private String name;
