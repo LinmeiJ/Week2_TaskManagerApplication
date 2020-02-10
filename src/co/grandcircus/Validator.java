@@ -166,14 +166,25 @@ public static String runtimeDate() {
 		return "Invalid entry.";
 	}
 	
-	public static boolean getStringYN(Scanner sc, String s) {
-		String str = sc.nextLine().toLowerCase();
-		if(str.charAt(0) == 'y' || str.equals("yes")) {
-			return true;
-		}else {
-			return false;
+	public static boolean getUserConfirm(Scanner sc, String s) {
+		boolean yOrN = false;
+		boolean strCheck = true;
+		while(true) {
+			System.out.println(s);	
+			String str = sc.nextLine().toLowerCase();
+			if(str.charAt(0) == 'y' || str.equals("yes")) {
+				strCheck = false;
+				yOrN = true;
+			}
+			else if(str.charAt(0)=='n' || str.equals("no")) { 
+				yOrN = false;
+				strCheck =  false;
+			}else {
+				System.out.print("Please enter 'y' or 'n' only, ");
+				strCheck = true;
 		}
-		
+		return yOrN;
+		}
 	}
 }
 

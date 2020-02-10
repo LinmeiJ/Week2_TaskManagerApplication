@@ -17,8 +17,8 @@ public class TaskManager {
 		// Just initializing 1 task for testing
 		Task ts = new Task(1, "Linmei", "05/05/2019", "Incomplete", "Studying");
 		taskList.add(ts);
-
-		String quit = "n";
+		int userChoice = 0;
+		boolean quit = false;
 		do {
 			ts.displayMenu();
 
@@ -45,14 +45,17 @@ public class TaskManager {
 				searchMember(sc, taskList);
 				break;
 			case 8:
-				quit = userQuit(sc);
+				quit = Validator.getUserConfirm(sc, "Are you sure you want to quite?(y/n): ");
+				userChoice = 8;
 				break;
 			default:
 				System.out.println("Invalid enter.");
 				break;
 			}
-			returnMainMenu(sc);
-		} while (quit.equalsIgnoreCase("n"));
+			if(!(userChoice == 8)) {
+				returnMainMenu(sc);
+			}
+		} while (!quit);
 		System.out.println("Goodbye!");
 	}
 
@@ -77,11 +80,11 @@ public class TaskManager {
 	}
 
 	public static void addTasks(Scanner sc, LinkedList<Task> taskList) {
-		String continueAdd = "y";
-		while (continueAdd.equalsIgnoreCase("y")) {
+		boolean continueAdd = true;
+		while (continueAdd) {
 			taskList.add(new Task(getTaskNumber(taskList), getMemberName(sc), getDueDate(sc), "Incomplete",
 					getTaksDescription(sc)));
-			continueAdd = Validator.getString(sc, "Would you like to add more task?(y/n): ");
+			continueAdd = Validator.getUserConfirm(sc, "Would you like to add more task?(y/n): ");
 		}
 	}
 
@@ -122,10 +125,11 @@ public class TaskManager {
 
 	private static void getTaskDeleted(Scanner sc, LinkedList<Task> taskList, int itemNum, int i) {
 		if (taskList.get(i).getNum() == itemNum) {
-			System.out.println("Are you sure you want to delete task " + itemNum + " (y/n): ");
-			String ensure = sc.nextLine().toLowerCase();
-
-			if (ensure.equalsIgnoreCase("y") || ensure.equalsIgnoreCase("yes")) {
+//			System.out.println("Are you sure you want to delete task " + itemNum + " (y/n): ");
+//			String ensure = sc.nextLine().toLowerCase();
+//
+//			if (ensure.equalsIgnoreCase("y") || ensure.equalsIgnoreCase("yes")) {
+			if(Validator.getUserConfirm(sc, "Are you sure you want to delete task " + itemNum + " (y/n): " )) {
 				taskList.remove(taskList.indexOf(taskList.get(i)));// remove the task
 				System.out.println("Delete completed.");
 				resetTaskNumber(taskList);
@@ -141,11 +145,13 @@ public class TaskManager {
 
 	public static void getTasksStatus(Scanner sc, LinkedList<Task> taskList) {
 		displayList(taskList);
-		int num = Validator.getInt(sc, "Enter the task number that you want it to be complete?");// prompt
+		int num = Validator.getInt(sc, "Enter the task number that you want it to be complete?");
+		searchForTaskAndConfrmChangeItsStatus(sc, taskList, num);
+	}
+
+	private static void searchForTaskAndConfrmChangeItsStatus(Scanner sc, LinkedList<Task> taskList, int num) {
 		if (num <= taskList.size() && num > 0 && taskList.get(num - 1).getTaskStatus().matches("Incomplete")) {
-			System.out.println("Are you sure to change the status of number " + num + "? (y/n):");// make sure
-			String ensure = sc.nextLine().toLowerCase();
-			if (ensure.matches("y") || ensure.matches("yes")) {// if yes, change status from "Incomplete" to "complete"
+			if(Validator.getUserConfirm(sc, "Are you sure the task has completed? (y/n):"))	{
 				taskList.get(num - 1).setTaskStatus("Complete");
 				System.out.println("Marked task number " + num + " as Complete.");
 			}
@@ -156,15 +162,8 @@ public class TaskManager {
 	public static void editTask(Scanner sc, LinkedList<Task> taskList) {
 		displayList(taskList);
 		int num = Validator.getInt(sc, "Enter the task number you wish to edit: ");
-		String selectContent = "";
 		if (num <= taskList.size()) {
-			for (int i = 0; i < taskList.size(); i++) {
-				if (taskList.get(i).getNum() == num) {
-					selectContent = Validator.getString(sc,
-							"Would you like to edit name, due date or task description?");
-					updateListContent(sc, taskList, num, selectContent);
-				}
-			}
+			getSpecificTitleUpdated(sc, taskList, num);
 		} else {
 			System.out.println("Name is not found");
 			System.out.println(
@@ -172,15 +171,21 @@ public class TaskManager {
 		}
 	}
 
-	private static void updateListContent(Scanner sc, LinkedList<Task> taskList, int num, String content) {
-
-		String ensure = Validator.getString(sc, "Are you sure to edit the " + content + "? (y/n)");
-		if (ensure.toLowerCase().equalsIgnoreCase("y")) {
-			if (ensure.matches("y") || ensure.matches("yes")) {
-				getUpdated(taskList, content, num, Validator.getString(sc, "Please update the " + content + ": "));
-			} else
-				System.out.println("Entry is invalid");
+	private static void getSpecificTitleUpdated(Scanner sc, LinkedList<Task> taskList, int num) {
+		String selectContent;
+		for (int i = 0; i < taskList.size(); i++) {
+			if (taskList.get(i).getNum() == num) {
+				selectContent = Validator.getString(sc,
+						"Would you like to edit name, due date or task description?");
+				updateListContent(sc, taskList, num, selectContent);
+			}
 		}
+	}
+
+	private static void updateListContent(Scanner sc, LinkedList<Task> taskList, int num, String content) {
+		if(Validator.getUserConfirm(sc, "Are you sure to edit the " + content + "? (y/n)")) {
+				getUpdated(taskList, content, num, Validator.getString(sc, "Please update the " + content + ": "));
+			} 
 	}
 
 	private static void getUpdated(LinkedList<Task> taskList, String content, int num, String update) {
@@ -239,16 +244,5 @@ public class TaskManager {
 			System.out.format("  %-11d %-13s %-18s %-23s %s %n", taskList.get(i).getNum(), taskList.get(i).getName(),
 					taskList.get(i).getDueDate(), taskList.get(i).getTaskStatus(), taskList.get(i).getDescription());
 		}
-	}
-
-	public static String userQuit(Scanner sc) {
-		String quit;
-		System.out.println("Are you sure to quit? (y/n)");
-		quit = sc.nextLine().toLowerCase();
-		if (quit.matches("y") || quit.matches("yes")) {
-			quit = "y";
-		} else
-			quit = "n";
-		return quit;
 	}
 }
