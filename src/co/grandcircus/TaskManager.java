@@ -14,9 +14,11 @@ public class TaskManager {
 		Scanner sc = new Scanner(System.in);
 
 		LinkedList<Task> taskList = new LinkedList<Task>();
+		
 		// Just initializing 1 task for testing
 		Task ts = new Task(1, "Linmei", "05/05/2019", "Incomplete", "Studying");
 		taskList.add(ts);
+		
 		int userChoice = 0;
 		boolean quit = false;
 		do {
@@ -26,14 +28,14 @@ public class TaskManager {
 			case 1:
 				displayList(taskList);
 				break;
-			case 2: // ask user enter each piece of data
-				addTasks(sc, taskList);// with incomplete status and task numbers
+			case 2: 
+				addTasks(sc, taskList);
 				break;
 			case 3:
-				deleteTask(sc, taskList);// choose to delete task
+				deleteTask(sc, taskList);
 				break;
 			case 4:
-				getTasksStatus(sc, taskList);// mark task complete
+				getTasksStatus(sc, taskList);
 				break;
 			case 5:
 				editTask(sc, taskList);
@@ -125,10 +127,6 @@ public class TaskManager {
 
 	private static void getTaskDeleted(Scanner sc, LinkedList<Task> taskList, int itemNum, int i) {
 		if (taskList.get(i).getNum() == itemNum) {
-//			System.out.println("Are you sure you want to delete task " + itemNum + " (y/n): ");
-//			String ensure = sc.nextLine().toLowerCase();
-//
-//			if (ensure.equalsIgnoreCase("y") || ensure.equalsIgnoreCase("yes")) {
 			if(Validator.getUserConfirm(sc, "Are you sure you want to delete task " + itemNum + " (y/n): " )) {
 				taskList.remove(taskList.indexOf(taskList.get(i)));// remove the task
 				System.out.println("Delete completed.");

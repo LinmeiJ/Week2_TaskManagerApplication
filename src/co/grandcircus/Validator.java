@@ -8,14 +8,11 @@ import java.util.LinkedList;
 import java.util.Scanner;
 
 
-// this is a concrete class that can be used over and over again
-// you can also add your own validation methods here
 public class Validator {
 	public static String getString(Scanner sc, String prompt) {
 		System.out.print(prompt);
 		String s = sc.nextLine().toLowerCase(); 
 		if(!s.isEmpty()) {
-//			sc.nextLine(); // discard any other data entered on the line
 			return s;
 		}
 		else return "Entry is empty";
@@ -33,7 +30,7 @@ public class Validator {
 			} else {
 				System.out.println("Error! Invalid integer value. Try again.");
 			}
-		sc.nextLine(); // discard any other data entered on the line
+		sc.nextLine();
 		}
 		return i;
 	}
@@ -64,7 +61,7 @@ public class Validator {
 			} else {
 				System.out.println("Error! Invalid decimal value. Try again.");
 			}
-			sc.nextLine(); // discard any other data entered on the line
+			sc.nextLine(); 
 		}
 		return d;
 	}
@@ -169,7 +166,7 @@ public static String runtimeDate() {
 	public static boolean getUserConfirm(Scanner sc, String s) {
 		boolean yOrN = false;
 		boolean strCheck = true;
-		while(true) {
+		while(strCheck) {
 			System.out.println(s);	
 			String str = sc.nextLine().toLowerCase();
 			if(str.charAt(0) == 'y' || str.equals("yes")) {
@@ -183,8 +180,8 @@ public static String runtimeDate() {
 				System.out.print("Please enter 'y' or 'n' only, ");
 				strCheck = true;
 		}
-		return yOrN;
 		}
+		return yOrN;
 	}
 }
 
