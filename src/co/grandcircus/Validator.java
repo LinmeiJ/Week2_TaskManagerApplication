@@ -1,4 +1,3 @@
-package co.grandcircus;
 
 import java.text.DateFormat;
 import java.util.regex.Pattern;
@@ -165,6 +164,16 @@ public static String runtimeDate() {
 			}
 		}
 		return "Invalid entry.";
+	}
+	
+	public static boolean getStringYN(Scanner sc, String s) {
+		String str = sc.nextLine().toLowerCase();
+		if(str.charAt(0) == 'y' || str.equals("yes")) {
+			return true;
+		}else {
+			return false;
+		}
+		
 	}
 }
 
